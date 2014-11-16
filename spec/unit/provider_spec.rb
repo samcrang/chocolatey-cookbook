@@ -41,3 +41,22 @@ describe 'chocolatey_test::remove_package' do
     end
   end
 end
+
+describe 'chocolatey_test::upgrade_package' do
+  context 'on a supported OS' do
+    let(:chef_run) {
+      ChefSpec::SoloRunner.new(
+        platform: 'windows',
+        version: '2012',
+        step_into: 'chocolatey'
+      )
+    }
+
+    it 'upgrades package' do
+      chef_run.converge(described_recipe) do
+        ChocolateyHelpers.stub(:upgradeable?).and_return(true)
+      end
+      expect(chef_run).to run_execute('updating test-package to latest').with(command: /[^\"].+\/bin\/choco\" update test-package/)
+    end
+  end
+end
