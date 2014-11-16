@@ -34,6 +34,7 @@ describe 'chocolatey::default' do
 
     it 'does not install chocolatey' do
       chef_run.converge(described_recipe)
+      expect(chef_run).to_not include_recipe('windows')
       expect(chef_run).to_not run_powershell_script('install chocolatey')
     end
   end
