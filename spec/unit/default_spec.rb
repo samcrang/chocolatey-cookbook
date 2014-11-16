@@ -1,5 +1,4 @@
-require 'chefspec'
-require 'chefspec/berkshelf'
+require 'spec_helper'
 
 describe 'chocolatey::default' do
   context 'on a supported OS' do
