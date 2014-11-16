@@ -4,14 +4,25 @@ require 'chefspec/berkshelf'
 describe 'chocolatey::default' do
   context 'on a supported OS' do
     let(:chef_run) {
-      ChefSpec::SoloRunner.new(platform: 'windows', version: '2012').converge(described_recipe)
+      ChefSpec::SoloRunner.new(platform: 'windows', version: '2012')
     }
 
-    it 'installs chocolatey' do
+    it 'installs chocolatey if not already installed' do
+      chef_run.converge(described_recipe) do
+        stub_const('ChocolateyHelpers', double('ChocolateyHelpers', chocolatey_installed?: false))
+      end
       expect(chef_run).to run_powershell_script('install chocolatey')
     end
 
+    it 'does not install chocolatey if already installed' do
+      chef_run.converge(described_recipe) do
+        stub_const('ChocolateyHelpers', double('ChocolateyHelpers', chocolatey_installed?: true))
+      end
+      expect(chef_run).to_not run_powershell_script('install chocolatey')
+    end
+
     it 'upgrades chocolatey' do
+      chef_run.converge(described_recipe)
       expect(chef_run).to upgrade_chocolatey_package('chocolatey')
     end
   end
@@ -22,6 +33,7 @@ describe 'chocolatey::default' do
     }
 
     it 'does not install chocolatey' do
+      chef_run.converge(described_recipe)
       expect(chef_run).to_not run_powershell_script('install chocolatey')
     end
   end
