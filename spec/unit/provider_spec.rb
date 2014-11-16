@@ -15,10 +15,6 @@ describe 'chocolatey_test::install_package' do
     it 'installs package' do
       expect(chef_run).to run_execute('install package test-package').with(command: /[^\"].+\/bin\/choco\" install test-package/)
     end
-
-    it 'installs package at a specific version' do
-      expect(chef_run).to run_execute('install package test-package-version version 0.0.1').with(command: /[^\"].+\/bin\/choco\" install test-package-version -version 0.0.1/)
-    end
   end
 end
 
